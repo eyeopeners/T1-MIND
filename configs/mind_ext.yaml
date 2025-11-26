@@ -1,0 +1,71 @@
+seed: 42
+device: cuda
+folds: 5
+epochs: 50
+early_stop_patience: 10
+early_stop_min_delta: 0.0
+
+# === 训练/验证 DataLoader 参数（分开配置，避免过激） ===
+batch_size: 4
+batch_size_val: 4
+
+num_workers_train: 6
+num_workers_val: 6
+
+prefetch_factor_train: 2
+prefetch_factor_val: 2
+
+persistent_workers_train: true
+persistent_workers_val: false
+
+pin_memory_train: true
+pin_memory_val: false
+
+# 可选：如果你想更保守，直接把 train 的 num_workers 调到 6、prefetch 设 2 即可
+
+slices: 64
+axis: axial
+img_size: 224
+logdir: runs/exp_mind
+outdir: runs/exp_mind/checkpoints
+manifest: C:\Project1_T1+MIND\data\manifest.csv
+
+mind:
+  sim: exp
+  tau: 1.0
+
+lambda_prior: 0.2
+hierarchical: true
+
+text:
+  use: true
+  clip_arch: ViT-B/32
+  textprompt_csv: D:\Work\GraduationProject\code\sMRI\PPAL-main\textprompt_merged.csv
+  per_fold_dir: ""
+  alpha_text: 0.3
+  lambda_text: 0.2
+  temperature: 0.07
+  normalize: true
+
+imbalance:
+  use_sampler: true
+  focal_loss: true
+  focal_gamma: 2.0
+  label_smoothing: 0.0
+
+amp: true
+
+# === 数据集缓存控制（关键修复）===
+data:
+  cache_max_items_train: 0   # 关闭训练集缓存（强烈建议）
+  cache_max_items_val: 0     # 关闭验证集缓存（强烈建议）
+
+sparsify:
+  use: true
+  topk_ratio: 0.25
+  lambda_sparse: 0.01
+
+report:
+  save_per_fold_npz: true
+  do_ad_threshold_search: true
+  viz_after_train: true
